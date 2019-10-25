@@ -1,5 +1,6 @@
 ﻿@page "/fetchdata"
 @using BlazorApp.Shared
+@using System.IO;
 
 @inject HttpClient Http
 
@@ -7,9 +8,13 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
+
+
 @if (forecasts == null)
 {
     <p><em>Loading...</em></p>
+    <button onclick="ExportarCSV">Exportar a CSV</button>
+    <button @onclick="ActuGrilla">Actualiza grila</button>
 }
 else
 {
@@ -19,7 +24,7 @@ else
                 <th>Id</th>
                 <th>Nombre</th>
                 <th>Apellido</th>
-                
+
             </tr>
         </thead>
         <tbody>
@@ -29,19 +34,36 @@ else
                     <td>@forecast.Id.ToString()</td>
                     <td>@forecast.Nombre</td>
                     <td>@forecast.Apellido</td>
-                    
+
                 </tr>
             }
         </tbody>
+
     </table>
+    <button onclick="ExportarCSV">Exportar a CSV</button>
+    <button @onclick="ActuGrilla">Actualiza grila</button>
 }
 
-@code {
-    
+@code
+{
+
     PersonasModel[] forecasts;
 
     protected override async Task OnInitializedAsync()
     {
+        forecasts = await Http.GetJsonAsync<PersonasModel[]>("WeatherForecast");
+    }
+
+    private void ExportarCSV()
+    {
+        using (var memoryStream = new MemoryStream())
+        {
+
+        }
+    }
+    protected async Task ActuGrilla()
+    {
+
         forecasts = await Http.GetJsonAsync<PersonasModel[]>("WeatherForecast");
     }
 

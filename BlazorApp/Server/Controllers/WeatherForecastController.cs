@@ -23,19 +23,17 @@ namespace BlazorApp.Server.Controllers
         {
 
             var configuration = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile("appsettings.json", false)
-        .Build();
-            var connectionString = configuration.GetSection("MiConn").Value;
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false)
+                .Build();
+            //var connectionString = configuration.GetSection("MiConn").Value;
+            var connectionString = configuration.GetConnectionString("MiConn");
 
-            using (SqlConnection bdSql = new SqlConnection("Server=MARCELO-NB\\OCTUBRE; Database=Contactos; Integrated Security=true"))
-
+            //using (SqlConnection bdSql = new SqlConnection("Server=MARCELO-NB\\OCTUBRE; Database=Contactos; Integrated Security=true;"))
+            using (SqlConnection bdSql = new SqlConnection(connectionString))
             {
-
                 using (SqlCommand bdComando = new SqlCommand("sp_ObtenerPersonas", bdSql))
-
                 {
-
                     bdComando.CommandType = CommandType.StoredProcedure;
                     //bdComando.Parameters.Add(new SqlParameter("@vIdCliente", idCliente));
                     var Contactos = new List<PersonasModel>();
@@ -43,7 +41,6 @@ namespace BlazorApp.Server.Controllers
 
                     using (var recordset = bdComando.ExecuteReader())
                     {
-
                         if (recordset.HasRows)
                         {
                             using (var dt = new DataTable())
@@ -54,12 +51,8 @@ namespace BlazorApp.Server.Controllers
                                     .Select(row => new PersonasModel
                                     {
                                         Id = row.Field<int?>(0).GetValueOrDefault(),
-
                                         Nombre = row.Field<string>(1),
                                         Apellido = row.Field<string>(2)
-
-
-
                                     }).ToList();
                                 return target;
                             }
@@ -68,19 +61,8 @@ namespace BlazorApp.Server.Controllers
                         {
                             throw new Exception("Error: ");
                         }
-
-                        //while (await recordset.ReadAsync())
-                        //{
-                        //    // asignamos los valores del recordset mediante un
-                        //    // método en el que formateamos los valores recibidos
-                        //    Contactos.Add(recordset.GetInt16("Id"));
-                        //}
                     }
-
-
-
                 }
-
             }
 
 
